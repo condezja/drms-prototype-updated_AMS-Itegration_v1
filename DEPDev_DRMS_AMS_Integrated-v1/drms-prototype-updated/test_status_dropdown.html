@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Status Dropdown Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .instructions {
+      background: #e3f2fd;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    .test-section {
+      background: white;
+      border: 1px solid #ddd;
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+    }
+    .console-output {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      padding: 15px;
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    button {
+      background: #1976d2;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+    button:hover {
+      background: #1565c0;
+    }
+    .status-dropdown {
+      padding: 4px 8px;
+      border: 1px solid #d0d0d0;
+      border-radius: 4px;
+      font-size: 12px;
+      background: white;
+      cursor: pointer;
+      min-width: 140px;
+    }
+    .pill {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .pill-green { background: #e8f5e9; color: #2e7d32; }
+    .pill-blue { background: #e3f2fd; color: #1565c0; }
+    .pill-amber { background: #fff3e0; color: #e65100; }
+  </style>
+</head>
+<body>
+  <h1>🔍 Status Dropdown Debug Test</h1>
+  
+  <div class="instructions">
+    <h3>Instructions:</h3>
+    <ol>
+      <li>Open browser DevTools (press F12)</li>
+      <li>Go to the Console tab</li>
+      <li>Click "Open Main Prototype" button below</li>
+      <li>Navigate to "Incoming Documents" in the prototype</li>
+      <li>Check the console logs to see which documents show dropdowns</li>
+      <li>Look for documents addressed to "RD" - these should have dropdowns</li>
+    </ol>
+  </div>
+
+  <div class="test-section">
+    <h3>Quick Test</h3>
+    <button onclick="openPrototype()">Open Main Prototype</button>
+    <button onclick="testDropdown()">Test Dropdown Logic Here</button>
+    <button onclick="clearConsole()">Clear Console</button>
+  </div>
+
+  <div class="test-section">
+    <h3>Example Status Displays:</h3>
+    <p><strong>Static Badge (not editable):</strong> <span class="pill pill-green">Done</span></p>
+    <p><strong>Dropdown (editable):</strong> 
+      <select class="status-dropdown" onchange="alert('Status changed to: ' + this.value)">
+        <option value="Sent">Sent</option>
+        <option value="Acknowledged">Acknowledged</option>
+        <option value="In Progress" selected>In Progress</option>
+        <option value="Needs Clarification">Needs Clarification</option>
+        <option value="On Hold">On Hold</option>
+        <option value="Done">Done</option>
+      </select>
+    </p>
+  </div>
+
+  <div class="test-section">
+    <h3>Console Output:</h3>
+    <div class="console-output" id="console-output">
+      Console logs will appear here and in the browser DevTools...
+    </div>
+  </div>
+
+  <script>
+    // Capture console logs
+    const originalLog = console.log;
+    const consoleDiv = document.getElementById('console-output');
+    
+    console.log = function(...args) {
+      originalLog.apply(console, args);
+      const message = args.map(arg => 
+        typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+      ).join(' ');
+      consoleDiv.innerHTML += message + '<br>';
+      consoleDiv.scrollTop = consoleDiv.scrollHeight;
+    };
+
+    function openPrototype() {
+      console.log('Opening main prototype...');
+      console.log('INSTRUCTIONS:');
+      console.log('1. Look for documents in Incoming Documents');
+      console.log('2. Documents addressed to "RD" should show dropdowns');
+      console.log('3. Documents addressed to others should show static badges');
+      window.open('./depdev_dms_prototype.html', '_blank');
+    }
+
+    function testDropdown() {
+      console.log('=== TESTING DROPDOWN LOGIC ===');
+      
+      // Simulate current user
+      const currentUser = { role: "admin", name: "Sir Harry", division: null };
+      console.log('Current User:', currentUser);
+      
+      // Test documents
+      const testDocs = [
+        { ref: "2026-05-005", to: "Regional Director", subject: "Invitation" },
+        { ref: "2026-04-155", to: "RD", subject: "Personnel Action" },
+        { ref: "2026-05-004", to: "Regional Staff", subject: "DMS Advisory" },
+        { ref: "2026-05-001", to: "Chief Reyes", subject: "Performance Target" }
+      ];
+      
+      testDocs.forEach(doc => {
+        console.log('---');
+        console.log('Document:', doc.ref, '| To:', doc.to);
+        
+        let isRecipient = false;
+        
+        // Check if addressed to RD and user is admin
+        if (doc.to && (doc.to === 'RD' || doc.to === 'Regional Director')) {
+          if (currentUser.role === 'rd' || currentUser.role === 'admin') {
+            isRecipient = true;
+            console.log('✓ MATCH: User is RD/admin, doc is for RD');
+          }
+        }
+        
+        // Check exact name
+        if (doc.to && doc.to === currentUser.name) {
+          isRecipient = true;
+          console.log('✓ MATCH: Exact name match');
+        }
+        
+        if (isRecipient) {
+          console.log('→ RESULT: DROPDOWN (editable)');
+        } else {
+          console.log('→ RESULT: STATIC BADGE (not editable)');
+        }
+      });
+      
+      console.log('=== TEST COMPLETE ===');
+    }
+
+    function clearConsole() {
+      consoleDiv.innerHTML = 'Console cleared...<br>';
+    }
+
+    // Initial message
+    console.log('Status Dropdown Debug Test loaded');
+    console.log('Click "Test Dropdown Logic Here" to see which documents should have dropdowns');
+  </script>
+</body>
+</html>

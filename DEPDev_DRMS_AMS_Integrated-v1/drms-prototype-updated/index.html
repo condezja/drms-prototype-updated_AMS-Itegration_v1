@@ -1,0 +1,1893 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DepDev DMS Prototype</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Roboto+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="./styles.css" />
+
+    <!-- PDF.js Library for PDF rendering -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
+    <!-- Mammoth.js Library for DOCX rendering -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+
+    <style>
+        *:focus {
+            outline: 2px solid var(--navy);
+            outline-offset: 2px;
+        }
+
+        *:focus:not(:focus-visible) {
+            outline: none;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- ===== SIGN IN SCREEN ===== -->
+    <div class="screen active" id="screen-signin">
+        <div class="auth-page">
+            <div class="auth-bg"></div>
+            <div class="auth-overlay"></div>
+            <div class="auth-content">
+                <!-- Center Watermark -->
+                <img src="logobg.png" class="auth-watermark" alt="Seal Watermark" />
+
+                <!-- Left branding -->
+                <div class="auth-branding">
+                    <div class="auth-branding-top">DEPDev CENTRAL VISAYAS</div>
+                    <h1 class="auth-branding-title">
+                        DEPDev 7
+                    </h1>
+                    <h2 class="auth-branding-subtitle">
+                        Document Record and Management System
+                    </h2>
+                    <div class="auth-branding-desc-wrap">
+                        <div class="auth-branding-line"></div>
+                        <p class="auth-branding-text">
+                            Centralized Document Record and Management System<br />
+                            for the Office of the Regional Director
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Right form area -->
+                <div class="auth-form-wrap">
+                    <div class="auth-card">
+                        <!-- Logo Section -->
+                        <div class="auth-logo-section">
+                            <img src="logo.png" alt="DEPDev Logo" class="auth-logo" />
+                        </div>
+
+                        <!-- Welcome Section -->
+                        <div class="auth-welcome-section">
+                            <h2 class="auth-title">Welcome back!</h2>
+                            <p class="auth-subtitle">Sign in to access the Document Record and Management System</p>
+                        </div>
+
+                        <!-- Login Form -->
+                        <form class="auth-form">
+                            <div class="auth-input-group">
+                                <label class="auth-label" for="login-email">Email Address</label>
+                                <input type="email" class="auth-input-line" id="login-email"
+                                    value="harry@depdev7.gov.ph" placeholder="Enter your email" />
+                            </div>
+
+                            <div class="auth-input-group">
+                                <label class="auth-label" for="login-pass">Password</label>
+                                <div class="auth-input-wrap-line">
+                                    <input type="password" class="auth-input-line" id="login-pass" value="password"
+                                        placeholder="Enter your password" />
+                                    <button type="button" class="auth-icon-btn-line" id="login-pass-toggle"
+                                        onclick="togglePasswordVisibility('login-pass', 'login-pass-toggle')"
+                                        title="Show/Hide password">
+                                        <svg class="icn" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                                            stroke-linejoin="round" aria-hidden="true">
+                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                                            <circle cx="12" cy="12" r="3" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <button type="button" class="auth-submit" onclick="doLogin()">
+                                Sign In
+                            </button>
+                        </form>
+
+                        <!-- Demo Access Section -->
+                        <div class="auth-demo-section">
+                            <div class="auth-demo-header">
+                                <span class="auth-demo-icon"><svg class="icn" width="14" height="14" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                                        stroke-linejoin="round" aria-hidden="true">
+                                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                                        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                                    </svg></span>
+                                <span class="auth-demo-title">Prototype Demo Access</span>
+                            </div>
+                            <div class="auth-demo-buttons">
+                                <button class="auth-demo-btn" onclick="prepareLogin('admin')">Admin</button>
+                                <button class="auth-demo-btn" onclick="prepareLogin('rd')">RD</button>
+                                <button class="auth-demo-btn" onclick="prepareLogin('ard')">ARD</button>
+                                <button class="auth-demo-btn" onclick="prepareLogin('dc')">Chief</button>
+                                <button class="auth-demo-btn" onclick="prepareLogin('custodian')">Custodian</button>
+                                <button class="auth-demo-btn" onclick="prepareLogin('staff')">Staff</button>
+                                <button class="auth-demo-btn" onclick="prepareLogin('supervisor')">Supervisor</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== SIGN UP SUCCESS SCREEN ===== -->
+    <div class="screen" id="screen-signup-success">
+        <div class="auth-page">
+            <div class="auth-bg"></div>
+            <div class="auth-overlay"></div>
+            <div class="auth-content" style="justify-content: center;">
+                <div class="auth-form-wrap" style="margin: 0; max-width: 35rem; width: 100%;">
+                    <div class="auth-card" style="height: auto; padding: 1.5rem 1.5rem; text-align: center;">
+                        <div class="auth-logo-wrap" style="margin-bottom: 1.5rem;">
+                            <img src="logo.png" alt="Logo" class="auth-logo" />
+                        </div>
+
+                        <div class="auth-branding-top"
+                            style="color: var(--muted); font-size: 0.85rem; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700; margin-bottom: 0.5rem;">
+                        </div>
+                        <h2 class="auth-title"
+                            style="font-family: 'Helvetica Neue', 'Helvetica', Arial, sans-serif ; font-size: 2rem; color: var(--success); margin: 0 0 1rem; font-weight: 700;">
+                            Registration Successful!</h2>
+
+                        <p class="auth-subtitle"
+                            style="color: var(--text); line-height: 1.6; font-size: 1rem; margin: 0 auto 2.5rem; max-width: 28rem;">
+                            Your account will be verified by the system administrator before activation.
+                        </p>
+
+                        <button type="button" class="auth-submit" onclick="showScreen('screen-signin')"
+                            style="max-width: 250px; margin: 0 auto; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                            Back to Sign In
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== FORGOT PASSWORD SCREEN ===== -->
+    <div class="screen" id="screen-forgot-password">
+        <div class="auth-page">
+            <div class="auth-bg"></div>
+            <div class="auth-overlay"></div>
+            <div class="auth-content" style="justify-content: center;">
+                <div class="auth-form-wrap" style="margin: 0; max-width: 35rem; width: 100%;">
+                    <div class="auth-card" style="height: auto; padding: 2.5rem 2.5rem; text-align: center;">
+                        <div class="auth-logo-wrap" style="margin-bottom: 1.5rem;">
+                            <img src="logo.png" alt="Logo" class="auth-logo" />
+                        </div>
+
+                        <h2 class="auth-title" style="margin: 0 0 0.5rem; font-size: 1.6rem;">
+                            Reset Password
+                        </h2>
+                        <p class="auth-subtitle" style="margin: 0 0 2rem; font-size: 0.85rem;">
+                            Enter your email address and we'll send you instructions to reset your password
+                        </p>
+
+                        <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                            <div class="auth-input-group">
+                                <div class="auth-label-wrap">
+                                    <label class="auth-label">EMAIL ADDRESS</label>
+                                    <span class="auth-label-icon"><svg class="icn" width="16" height="16"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                                            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                            <rect x="2" y="4" width="20" height="16" rx="2" />
+                                            <path d="m22 7-10 6L2 7" />
+                                        </svg></span>
+                                </div>
+                                <input type="email" class="auth-input-line" id="forgot-email"
+                                    placeholder="your.email@depdev7.gov.ph" />
+                            </div>
+
+                            <button type="button" class="auth-submit" onclick="sendPasswordReset()">
+                                Send Reset Instructions
+                            </button>
+
+                            <button type="button" class="auth-text-btn" onclick="showScreen('screen-signin')"
+                                style="color: #214a9a; font-weight: 600; cursor: pointer; border: none; background: none; padding: 0.5rem; font-size: 0.875rem;">
+                                Back to Sign In
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== APP SCREEN ===== -->
+    <div class="screen" id="screen-app">
+        <div class="app">
+            <!-- SIDEBAR -->
+            <div class="sidebar">
+                <div class="sb-logo">
+                    <div class="sb-logo-badge">
+                        <img src="logobg.png" alt="DMS Logo" class="sb-logo-img" onerror="
+                  this.style.display = 'none';
+                  this.nextElementSibling.style.display = 'flex';
+                " />
+                        <span class="sb-logo-fallback">DMS</span>
+                    </div>
+                    <div class="sb-logo-name"><span>Document Record and</span><span>Management System</span></div>
+                </div>
+                <div class="sb-user">
+                    <div class="sb-avatar" id="sb-avatar">H</div>
+                    <div>
+                        <div class="sb-name" id="sb-name">Sir. Harry</div>
+                        <div class="sb-role" id="sb-role">Administrator</div>
+                    </div>
+                </div>
+                <div class="sb-nav" id="sb-nav">
+                    <!-- injected by JS -->
+                </div>
+                <!-- Sign out: rendered unconditionally at the bottom for every role (not part of getNav filtering) -->
+                <div class="sb-logout" id="nav-signout" onclick="doLogout()" title="Sign out" data-tooltip="Sign out">
+                    <span class="sb-icon"><svg class="icn" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"
+                            aria-hidden="true">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                            <polyline points="16 17 21 12 16 7" />
+                            <line x1="21" y1="12" x2="9" y2="12" />
+                        </svg></span><span class="sb-logout-text">Sign out</span>
+                </div>
+                <button class="sidebar-toggle-btn" onclick="toggleSidebar()" aria-label="Toggle Sidebar">
+                    <span class="sidebar-arrow">&#x276E;</span>
+                </button>
+            </div>
+            <!-- Sidebar overlay for mobile -->
+            <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+            <!-- MAIN -->
+            <div class="main">
+                <div class="topbar">
+                    <button class="hamburger-btn" id="hamburger-btn" onclick="toggleSidebar()" aria-label="Open menu">
+                        <span></span><span></span><span></span>
+                    </button>
+                    <div class="topbar-brand">
+                        <img src="logo.png" alt="DMS Logo" class="topbar-logo" />
+                    </div>
+                    <div class="topbar-right">
+                        <div class="topbar-nav-link" onclick="toggleNotif()" aria-label="Notifications">
+                            <span class="topbar-icn"><svg class="icn" width="16" height="16" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                                    stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                                    <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                                </svg></span> Notifications
+                            <div class="notif-dot" id="notif-badge-dot" style="display:none;"></div>
+                            <span id="notif-badge-count"
+                                style="display:none;background:var(--danger);color:white;border-radius:10px;padding:2px 8px;font-size:11px;font-weight:600;margin-left:6px;"></span>
+                        </div>
+                        <div class="topbar-nav-link" onclick="openRegisterDocumentChoice()"
+                            aria-label="Register Document">
+                            <span class="topbar-icn"><svg class="icn" width="16" height="16" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                                    stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                                    <polyline points="14 2 14 8 20 8" />
+                                    <line x1="12" y1="18" x2="12" y2="12" />
+                                    <line x1="9" y1="15" x2="15" y2="15" />
+                                </svg></span> Register Document
+                        </div>
+                        <div class="topbar-nav-link" onclick="openCompose()" aria-label="Send Document">
+                            <span class="topbar-icn"><svg class="icn" width="16" height="16" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                                    stroke-linejoin="round" aria-hidden="true">
+                                    <line x1="22" y1="2" x2="11" y2="13" />
+                                    <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                                </svg></span> Send Document
+                        </div>
+                        <div class="topbar-nav-link" onclick="openAccountSettings()" aria-label="Settings">
+                            <span class="topbar-icn"><svg class="icn" width="16" height="16" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                                    stroke-linejoin="round" aria-hidden="true">
+                                    <circle cx="12" cy="12" r="3" />
+                                    <path
+                                        d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                                </svg></span> Settings
+                        </div>
+                        <!-- NOTIF PANEL -->
+                        <div class="notif-panel" id="notif-panel">
+                            <div class="notif-head">
+                                <span>Notifications</span><a onclick="markAllNotificationsRead()">Mark all read</a>
+                            </div>
+                            <div id="notif-list"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="content" id="main-content">
+                    <!-- injected by JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <input type="file" id="local-upload-input" style="display: none" onchange="handleLocalUpload(this)" />
+    <input type="file" id="ocr-upload-input" style="display: none" accept="image/*,application/pdf"
+        onchange="handleOCRUpload(this)" />
+
+    <!-- REGISTER DOCUMENT CHOICE MODAL -->
+    <div class="modal-overlay" id="register-choice-modal">
+        <div class="modal" style="max-width: 540px;">
+            <div class="modal-head">
+                <h3>Register Document</h3>
+                <span class="modal-close" onclick="closeRegisterChoice()">✕</span>
+            </div>
+            <div class="modal-body">
+                <p style="margin-bottom:1.5rem;color:var(--muted);line-height:1.6">
+                    What would you like to register?
+                </p>
+                <div style="display:grid;gap:1rem;">
+                    <div class="register-choice-card" onclick="chooseRegisterFile()">
+                        <div class="register-choice-icon"><svg class="icn" width="22" height="22" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                                stroke-linejoin="round" aria-hidden="true">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                                <polyline points="14 2 14 8 20 8" />
+                                <line x1="16" y1="13" x2="8" y2="13" />
+                                <line x1="16" y1="17" x2="8" y2="17" />
+                                <polyline points="10 9 9 9 8 9" />
+                            </svg></div>
+                        <div class="register-choice-content">
+                            <div class="register-choice-title">Register File</div>
+                            <div class="register-choice-desc">Upload a PDF, Word document, spreadsheet, or other
+                                supported document file.</div>
+                        </div>
+                    </div>
+                    <div class="register-choice-card" onclick="chooseRegisterEmail()">
+                        <div class="register-choice-icon"><svg class="icn" width="22" height="22" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                                stroke-linejoin="round" aria-hidden="true">
+                                <rect x="2" y="4" width="20" height="16" rx="2" />
+                                <path d="m22 7-10 6L2 7" />
+                            </svg></div>
+                        <div class="register-choice-content">
+                            <div class="register-choice-title">Register Email</div>
+                            <div class="register-choice-desc">Paste an email or text communication directly from Outlook
+                                or another source.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- UPLOAD DOCUMENT MODAL -->
+    <div class="modal-overlay" id="upload-document-modal">
+        <div class="modal" style="max-width: 760px;">
+            <div class="modal-head">
+                <h3>Upload Document</h3>
+                <span class="modal-close" onclick="closeUploadDocumentModal()">✕</span>
+            </div>
+            <div class="modal-body">
+                <div class="compose-wrap">
+                    <div class="field">
+                        <label>Document Type</label>
+                        <select id="upload-document-type">
+                            <option value="Memorandum">Memorandum</option>
+                            <option value="Letter">Letter</option>
+                            <option value="Endorsement">Endorsement</option>
+                            <option value="Report">Report</option>
+                            <option value="Email Communication">Email Communication</option>
+                            <option value="Bill / Financial">Bill / Financial</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label>Document Category</label>
+                        <select id="upload-document-category">
+                            <option value="Administrative">Administrative</option>
+                            <option value="Operations">Operations</option>
+                            <option value="Finance">Finance</option>
+                            <option value="Planning">Planning</option>
+                            <option value="Monitoring and Evaluation">Monitoring and Evaluation</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label>Subject</label>
+                        <input id="upload-document-subject" placeholder="Document subject or title" />
+                    </div>
+                    <div class="form-row" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;">
+                        <div class="field">
+                            <label>Reference Number</label>
+                            <input id="upload-document-ref" placeholder="e.g. DEP-2026-001" />
+                        </div>
+                        <div class="field">
+                            <label>Document Date</label>
+                            <input id="upload-document-date" type="date" />
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>Confidentiality Level</label>
+                        <select id="upload-document-confidentiality">
+                            <option value="Internal">Internal</option>
+                            <option value="Confidential">Confidential</option>
+                            <option value="Restricted">Restricted</option>
+                            <option value="Public">Public</option>
+                        </select>
+                    </div>
+                    <div class="form-row" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;">
+                        <div class="field">
+                            <label>Source / Sender</label>
+                            <input id="upload-document-source" placeholder="Office or individual" />
+                        </div>
+                        <div class="field">
+                            <label>Uploaded By</label>
+                            <input id="upload-document-uploader" value="" readonly />
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>Description / Remarks</label>
+                        <textarea id="upload-document-description"
+                            placeholder="Provide a brief description or remarks for the document..."
+                            style="min-height:100px;"></textarea>
+                    </div>
+                    <input type="file" id="upload-document-file-input" style="display:none"
+                        onchange="handleUploadDocumentFile(this)" />
+                    <div class="attach-zone" onclick="document.getElementById('upload-document-file-input').click()">
+                        <svg class="icn" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path
+                                d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" />
+                        </svg> <strong>Upload file</strong> - select the document to store in the repository<br />
+                        <span style="font-size: 12px">PDF, DOCX, XLSX, JPG, PNG and other supported files</span>
+                    </div>
+                    <div id="upload-document-file-list" class="attachment-list"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-sec" onclick="closeUploadDocumentModal()">Cancel</button>
+                <button class="btn-send" onclick="submitUploadDocument()">Upload Document</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- REGISTER EMAIL MODAL -->
+    <div class="modal-overlay" id="register-email-modal">
+        <div class="modal" style="max-width: 860px;">
+            <div class="modal-head">
+                <h3><svg class="icn" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <rect x="2" y="4" width="20" height="16" rx="2" />
+                        <path d="m22 7-10 6L2 7" />
+                    </svg> Register Email Communication</h3>
+                <span class="modal-close" onclick="closeRegisterEmail()">✕</span>
+            </div>
+            <div class="modal-body">
+                <div
+                    style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:0.7rem 1rem;margin-bottom:1.25rem;font-size:12.5px;color:#1e40af;line-height:1.5;">
+                    <strong><svg class="icn" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"
+                            aria-hidden="true">
+                            <rect x="8" y="2" width="8" height="4" rx="1" ry="1" />
+                            <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+                        </svg> Tip:</strong> Copy the email content from Outlook and paste it below. The system will
+                    register it as an official document record.
+                </div>
+                <div class="compose-wrap">
+
+                    <!-- EMAIL HEADER INFORMATION -->
+                    <div
+                        style="background:#f9fafb;border:1px solid var(--border);border-radius:8px;padding:1.25rem;margin-bottom:1.25rem;">
+                        <div
+                            style="font-size:11px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:1rem;">
+                            Email Information</div>
+                        <div class="form-row"
+                            style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;margin-bottom:1rem;">
+                            <div class="field" style="margin-bottom:0;">
+                                <label style="font-size:12px;margin-bottom:0.35rem;">From (Sender)</label>
+                                <input id="register-email-from" placeholder="sender@example.com"
+                                    style="font-size:13px;" />
+                            </div>
+                            <div class="field" style="margin-bottom:0;">
+                                <label style="font-size:12px;margin-bottom:0.35rem;">To (Recipient)</label>
+                                <input id="register-email-to" placeholder="recipient@example.com"
+                                    style="font-size:13px;" />
+                            </div>
+                        </div>
+                        <div class="form-row"
+                            style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;">
+                            <div class="field" style="margin-bottom:0;">
+                                <label style="font-size:12px;margin-bottom:0.35rem;">CC (Optional)</label>
+                                <input id="register-email-cc" placeholder="cc@example.com" style="font-size:13px;" />
+                            </div>
+                            <div class="field" style="margin-bottom:0;">
+                                <label style="font-size:12px;margin-bottom:0.35rem;">Date</label>
+                                <input id="register-email-date" type="date" style="font-size:13px;" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- EMAIL CONTENT (Subject + Body - visually connected) -->
+                    <div
+                        style="background:#ffffff;border:1px solid var(--border);border-radius:8px;padding:1.25rem;margin-bottom:1.25rem;">
+                        <div
+                            style="font-size:11px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:0.75rem;">
+                            Email Content</div>
+                        <div class="field" style="margin-bottom:0.75rem;">
+                            <label style="font-size:12px;margin-bottom:0.35rem;">Subject <span
+                                    style="color:var(--danger)">*</span></label>
+                            <input id="register-email-subject" placeholder="Enter the email subject line"
+                                style="font-size:14px;font-weight:500;" />
+                        </div>
+                        <div class="field" style="margin-bottom:0;">
+                            <label style="font-size:12px;margin-bottom:0.35rem;">Email Body <span
+                                    style="color:var(--danger)">*</span></label>
+                            <textarea id="register-email-body" placeholder="Paste the email content here...
+
+You can paste the entire email body. The system will preserve line breaks and formatting."
+                                style="min-height:260px;font-family:'Courier New',monospace;font-size:13px;line-height:1.6;border:1px solid #d1d5db;border-radius:6px;"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- DOCUMENT INFORMATION (DRMS Metadata) -->
+                    <div style="border-top:2px solid var(--border);padding-top:1.25rem;">
+                        <div
+                            style="font-size:11px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:1rem;">
+                            Document Information</div>
+                        <div class="field">
+                            <label>Document Type</label>
+                            <input value="Email Communication" readonly
+                                style="background:#f9fafb;cursor:not-allowed;color:#6b7280;" />
+                        </div>
+                        <div class="form-row"
+                            style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;">
+                            <div class="field">
+                                <label>Reference Number</label>
+                                <input id="register-email-ref" placeholder="Auto-generated" readonly
+                                    style="background:#f9fafb;cursor:not-allowed;color:#6b7280;" />
+                            </div>
+                            <div class="field">
+                                <label>Document Category</label>
+                                <select id="register-email-category">
+                                    <option value="Administrative">Administrative</option>
+                                    <option value="Operations">Operations</option>
+                                    <option value="Financial">Financial</option>
+                                    <option value="Planning">Planning</option>
+                                    <option value="Monitoring and Evaluation">Monitoring and Evaluation</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label>Confidentiality Level</label>
+                            <select id="register-email-confidentiality">
+                                <option value="Internal">Internal</option>
+                                <option value="Confidential">Confidential</option>
+                                <option value="Restricted">Restricted</option>
+                                <option value="Public">Public</option>
+                            </select>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-sec" onclick="closeRegisterEmail()">Cancel</button>
+                <button class="btn-send" onclick="submitRegisterEmail()">Register Email</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- COMPOSE / SEND-ROUTE MODAL -->
+    <div class="modal-overlay" id="compose-modal">
+        <div class="modal" style="max-width: 780px;">
+            <div class="modal-head">
+                <h3>Send Document</h3>
+                <span class="modal-close" onclick="closeCompose()">✕</span>
+            </div>
+            <div class="modal-body">
+                <div class="compose-wrap">
+
+                    <!-- Lifecycle notice -->
+                    <div
+                        style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:0.7rem 1rem;margin-bottom:1.25rem;font-size:12.5px;color:#1e40af;line-height:1.5;">
+                        <strong>Send Document workflow:</strong> Select an existing document from the repository → fill
+                        in destination details → click <em>Send Document</em>.
+                        To introduce a new document, use the <strong>Upload Document</strong> function instead.
+                    </div>
+
+                    <!-- Step 1: Select document -->
+                    <div class="field">
+                        <label>Step 1 — Select Document from Repository</label>
+                        <select id="route-document-picker" onchange="selectRouteDocument(this.value)">
+                            <option value="">Choose from the Document Repository...</option>
+                        </select>
+                    </div>
+
+                    <!-- Selected document summary card -->
+                    <div id="route-document-summary"
+                        style="display:none; background:#f8fafc; border:1.5px solid var(--border); border-radius:10px; padding:1rem 1.25rem; margin-bottom:1.25rem;">
+                        <div
+                            style="font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:0.07em; margin-bottom:0.5rem; font-weight:600;">
+                            Selected Document</div>
+                        <div id="route-document-summary-text"
+                            style="font-weight:700; color:var(--navy); font-size:14px; margin-bottom:0.5rem;"></div>
+                        <div id="route-document-meta"
+                            style="font-size:12px; color:var(--muted); display:flex; gap:1.25rem; flex-wrap:wrap;">
+                        </div>
+                        <div style="display:flex; gap:0.5rem; margin-top:0.75rem;">
+                            <button class="btn-sm" id="route-doc-view-btn" onclick="" style="display:none;"><svg
+                                    class="icn" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                                    stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                                    <circle cx="12" cy="12" r="3" />
+                                </svg> View</button>
+                            <button class="btn-sm" id="route-doc-download-btn" onclick="" style="display:none;"><svg
+                                    class="icn" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                                    stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                    <polyline points="7 10 12 15 17 10" />
+                                    <line x1="12" y1="15" x2="12" y2="3" />
+                                </svg> Download</button>
+                            <span id="route-doc-version-badge" style="display:none;"></span>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Destination details -->
+                    <div
+                        style="font-size:11px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:0.6rem;padding-top:0.25rem;border-top:1px solid var(--border);">
+                        Step 2 — Destination Details</div>
+
+                    <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                        <div class="field">
+                            <label>Destination Division <span style="color:var(--danger)">*</span></label>
+                            <select id="compose-to-division">
+                                <option value="">— Select Division —</option>
+                                <option value="Office of the Regional Director">Office of the Regional Director (ORD)
+                                </option>
+                                <option value="Monitoring and Evaluation Division">Monitoring and Evaluation Division
+                                    (MED)</option>
+                                <option value="Policy Formulation and Planning Division">Policy Formulation and Planning
+                                    Division (PFP)</option>
+                                <option value="Project Development, Investment Programming and Budget Division">Project
+                                    Development, Investment Programming and Budget (PDIP)</option>
+                                <option value="Development and Research Division">Development and Research Division
+                                    (DRD)</option>
+                                <option value="Finance and Administrative Division">Finance and Administrative Division
+                                    (FAD)</option>
+                                <option value="External">External / Outside Agency</option>
+                            </select>
+                        </div>
+                        <div class="field">
+                            <label>Recipient / Handler <span style="color:var(--danger)">*</span></label>
+                            <input id="compose-to" list="compose-recipient-list" placeholder="Name, role, or email…" />
+                            <datalist id="compose-recipient-list"></datalist>
+                        </div>
+                    </div>
+
+                    <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                        <div class="field">
+                            <label>Deadline (if applicable)</label>
+                            <input id="compose-deadline" type="date" />
+                        </div>
+                        <div class="field">
+                            <label>Priority Level <span style="color:var(--danger)">*</span></label>
+                            <select id="compose-priority">
+                                <option value="Low">Low</option>
+                                <option value="Normal" selected>Normal</option>
+                                <option value="High">High</option>
+                                <option value="Urgent">Urgent</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Document Direction Field -->
+                    <div class="field">
+                        <label>Document Direction <span style="color:var(--danger)">*</span></label>
+                        <div style="display:flex;gap:1.5rem;margin-top:0.5rem;">
+                            <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;font-weight:500;">
+                                <input type="radio" name="compose-direction" value="incoming"
+                                    style="width:18px;height:18px;" />
+                                <span style="font-size:14px;">Incoming</span>
+                            </label>
+                            <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;font-weight:500;">
+                                <input type="radio" name="compose-direction" value="outgoing"
+                                    style="width:18px;height:18px;" checked />
+                                <span style="font-size:14px;">Outgoing</span>
+                            </label>
+                        </div>
+                        <div style="font-size:12px;color:var(--muted);margin-top:0.5rem;">
+                            <span id="incoming-hint" style="display:none;"><svg class="icn" width="14" height="14"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <polyline points="22 12 16 12 14 15 10 15 8 12 2 12" />
+                                    <path
+                                        d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z" />
+                                </svg> Incoming: Document originated from outside the organization</span>
+                            <span id="outgoing-hint" style="display:inline;"><svg class="icn" width="14" height="14"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <line x1="22" y1="2" x2="11" y2="13" />
+                                    <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                                </svg> Outgoing: Document originated from within the organization</span>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label>Instruction</label>
+                        <textarea id="compose-instruction" class="compose-body"
+                            style="border:1.5px solid var(--border);border-radius:8px;padding:0.6rem;width:100%;min-height:100px;font-family:var(--font);font-size:14px;outline:none;"
+                            placeholder="Enter your instruction for the recipient (e.g. For signature, For information, For appropriate action)…"></textarea>
+                    </div>
+
+                    <!-- Hidden legacy fields kept for JS compatibility -->
+                    <input type="hidden" id="compose-kind" value="outgoing" />
+                    <input type="hidden" id="compose-type" value="Memorandum" />
+                    <input type="hidden" id="compose-subject" value="" />
+                    <input type="file" id="compose-attachment-input" style="display:none" multiple
+                        onchange="handleComposeAttachment(this)" />
+                    <div id="compose-attachment-list" style="display:none;"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-sec" onclick="closeCompose()" aria-label="Cancel">Cancel</button>
+                <button class="btn-send" onclick="sendDoc()" aria-label="Send Document">Send Document <svg class="icn"
+                        width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="margin-left:6px">
+                        <line x1="22" y1="2" x2="11" y2="13" />
+                        <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                    </svg></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MANUAL LOGBOOK MODAL -->
+    <div class="modal-overlay" id="manual-logbook-modal">
+        <div class="modal">
+            <div class="modal-head">
+                <h3>Manual Logbook Entry</h3>
+                <span class="modal-close" onclick="closeManualLogbook()">✕</span>
+            </div>
+            <div class="modal-body">
+                <div class="compose-wrap">
+                    <div class="field">
+                        <label>Reference No. (Auto-generated)</label>
+                        <input id="manual-ref" readonly />
+                    </div>
+                    <div class="field">
+                        <label>Direction</label>
+                        <select id="manual-kind">
+                            <option value="incoming">Incoming</option>
+                            <option value="outgoing">Outgoing</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label>Date Received</label>
+                        <input id="manual-date" type="date" />
+                    </div>
+                    <div class="field">
+                        <label>Type</label>
+                        <input id="manual-type" placeholder="e.g. Memorandum" />
+                    </div>
+                    <div class="field">
+                        <label>From / Sender</label>
+                        <input id="manual-from" placeholder="Sender" />
+                    </div>
+                    <div class="field">
+                        <label>Subject</label>
+                        <input id="manual-subject" placeholder="Document subject/title" />
+                    </div>
+                    <div class="field">
+                        <label>Routed To</label>
+                        <input id="manual-to" placeholder="Recipient / office" />
+                    </div>
+                    <div class="field" id="manual-attachment-wrapper" style="display:none">
+                        <label>Attached File</label>
+                        <div id="manual-attachment-list" class="attachment-list"></div>
+                    </div>
+                    <div class="field">
+                        <label>Status</label>
+                        <select id="manual-status">
+                            <option value="Sent">Sent</option>
+                            <option value="Acknowledged">Acknowledged</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Needs Clarification">Needs Clarification</option>
+                            <option value="On Hold">On Hold</option>
+                            <option value="Done">Done</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label>Physical Copy</label>
+                        <select id="manual-physical">
+                            <option value="yes">Yes</option>
+                            <option value="no" selected>No</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-sec" onclick="closeManualLogbook()" aria-label="Cancel">
+                    Cancel
+                </button>
+                <button class="btn-send" onclick="saveManualLogbook()" aria-label="Save Logbook Entry">
+                    Save Logbook Entry
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- DOCUMENT EDITOR MODAL -->
+    <div class="modal-overlay" id="editor-modal">
+        <div class="modal">
+            <div class="modal-head">
+                <h3 id="editor-title">Document Editor</h3>
+                <span class="modal-close" onclick="closeEditor()">✕</span>
+            </div>
+            <div class="modal-body">
+                <div class="field">
+                    <label>Editing Tool / Software</label>
+                    <select id="editor-tool">
+                        <option value="Word">Word Editor</option>
+                        <option value="Excel">Excel Editor</option>
+                        <option value="PowerPoint">PowerPoint Editor</option>
+                        <option value="General">General Rich Text Editor</option>
+                    </select>
+                </div>
+                <div class="editor-meta" id="editor-meta"></div>
+                <textarea id="editor-content" class="editor-area"
+                    placeholder="Edit document content here..."></textarea>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-sec" onclick="closeEditor()" aria-label="Cancel">
+                    Cancel
+                </button>
+                <button class="btn-send" onclick="saveEditor()" aria-label="Save Changes">
+                    Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- UPLOAD ENCODING ALERT MODAL -->
+    <div class="modal-overlay" id="upload-encode-modal">
+        <div class="modal" style="max-width: 480px">
+            <div class="modal-head">
+                <h3>Upload Complete</h3>
+                <span class="modal-close" onclick="closeUploadEncodeModal()" aria-label="Close">✕</span>
+            </div>
+            <div class="modal-body">
+                <div class="upload-alert-msg">
+                    Do you want to automatically encode this uploaded document in the
+                    Document Logbook?
+                    <span class="upload-alert-file" id="upload-file-name"></span>
+                </div>
+            </div>
+            <div class="modal-footer" style="justify-content: flex-end">
+                <button class="btn-sec" onclick="submitUploadEncodeChoice(false)" aria-label="No">
+                    No
+                </button>
+                <button class="btn-send" onclick="submitUploadEncodeChoice(true)" aria-label="Yes">
+                    Yes
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- COMMUNICATION MODAL -->
+    <div class="modal-overlay" id="communication-modal">
+        <div class="modal" style="max-width: 720px;">
+            <div class="modal-head">
+                <h3>Reply to Document</h3>
+                <span class="modal-close" onclick="closeCommunicationModal()" aria-label="Close">✕</span>
+            </div>
+            <div class="modal-body" id="communication-modal-body" style="padding-bottom:0">
+                <!-- populated by renderCommunicationModal -->
+            </div>
+            <div class="modal-footer" style="justify-content: flex-end; gap: 0.75rem;">
+                <button class="btn-sec" onclick="closeCommunicationModal()" aria-label="Cancel">Cancel</button>
+                <button class="btn-send" onclick="submitReply(currentCommunicationRef)" aria-label="Send Reply">Send
+                    Reply</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- OCR SCANNER MODAL -->
+    <div class="modal-overlay" id="ocr-scanner-modal">
+        <div class="modal" style="
+          max-width: 900px;
+          border-radius: 16px;
+          overflow: hidden;
+          box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+        ">
+            <div class="modal-head" style="
+            background: var(--navy);
+            color: #fff;
+            padding: 1.25rem 2rem;
+            border-bottom: none;
+          ">
+                <h3 style="margin: 0; display: flex; align-items: center; gap: 0.75rem">
+                    <span style="font-size: 1.5rem"><svg class="icn" width="22" height="22" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                            stroke-linejoin="round" aria-hidden="true">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                            <polyline points="14 2 14 8 20 8" />
+                            <line x1="16" y1="13" x2="8" y2="13" />
+                            <line x1="16" y1="17" x2="8" y2="17" />
+                            <polyline points="10 9 9 9 8 9" />
+                        </svg></span>
+                    Advanced OCR Scanner
+                </h3>
+                <span class="modal-close" onclick="closeOCRScanner()" aria-label="Close"
+                    style="color: #fff; opacity: 0.8">✕</span>
+            </div>
+            <div class="modal-body" style="padding: 0; background: #f4f7fa">
+                <div style="display: flex; height: 600px">
+                    <!-- Left Sidebar: Settings & Controls -->
+                    <div style="
+                width: 320px;
+                background: #fff;
+                border-right: 1px solid #e2e8f0;
+                display: flex;
+                flex-direction: column;
+                overflow-y: auto;
+              ">
+                        <div style="padding: 1.5rem; flex-grow: 1">
+                            <!-- Scanner Selection -->
+                            <div style="margin-bottom: 2rem">
+                                <div style="
+                      display: flex;
+                      align-items: center;
+                      justify-content: space-between;
+                      margin-bottom: 1rem;
+                    ">
+                                    <label style="
+                        font-weight: 700;
+                        color: var(--navy);
+                        font-size: 11px;
+                        text-transform: uppercase;
+                        letter-spacing: 0.1em;
+                      ">Scanner Source</label>
+                                    <button onclick="detectScanners()" style="
+                        background: none;
+                        border: none;
+                        color: var(--navy3);
+                        font-size: 11px;
+                        font-weight: 600;
+                        cursor: pointer;
+                        display: flex;
+                        align-items: center;
+                        gap: 0.25rem;
+                      ">
+                                        <span style="font-size: 14px"><svg class="icn" width="14" height="14"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                                                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                                <polyline points="23 4 23 10 17 10" />
+                                                <polyline points="1 20 1 14 7 14" />
+                                                <path
+                                                    d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+                                            </svg></span> Refresh
+                                    </button>
+                                </div>
+                                <div id="scanner-status" style="margin-bottom: 1rem">
+                                    <div style="
+                        padding: 1rem;
+                        background: #f8fafc;
+                        border: 1.5px dashed #cbd5e1;
+                        border-radius: 10px;
+                        text-align: center;
+                        color: var(--muted);
+                        font-size: 12px;
+                      ">
+                                        No scanner selected
+                                    </div>
+                                </div>
+                                <select id="scan-source" onchange="updateScanSettings()" style="
+                      width: 100%;
+                      padding: 0.75rem;
+                      border: 1.5px solid var(--border);
+                      border-radius: 10px;
+                      font-size: 14px;
+                      background: #fff;
+                    ">
+                                    <option value="flatbed">Flatbed Scanner</option>
+                                    <option value="adf">Automatic Document Feeder (ADF)</option>
+                                    <optgit statusion value="camera">Web Camera / Mobile Camera</option>
+                                </select>
+                            </div>
+
+                            <!-- Scan Configuration -->
+                            <div style="margin-bottom: 2rem">
+                                <label style="
+                      font-weight: 700;
+                      color: var(--navy);
+                      font-size: 11px;
+                      text-transform: uppercase;
+                      letter-spacing: 0.1em;
+                      display: block;
+                      margin-bottom: 1rem;
+                    ">Configuration</label>
+
+                                <div class="field" style="margin-bottom: 1rem">
+                                    <label style="
+                        font-size: 12px;
+                        margin-bottom: 0.5rem;
+                        color: var(--muted);
+                      ">Resolution</label>
+                                    <select id="scan-resolution" style="
+                        width: 100%;
+                        padding: 0.6rem;
+                        border: 1.5px solid var(--border);
+                        border-radius: 8px;
+                        font-size: 13px;
+                      ">
+                                        <option value="200">200 DPI (Standard)</option>
+                                        <option value="300" selected>
+                                            300 DPI (Recommended)
+                                        </option>
+                                        <option value="600">600 DPI (High Quality)</option>
+                                    </select>
+                                </div>
+
+                                <div class="field" style="margin-bottom: 1rem">
+                                    <label style="
+                        font-size: 12px;
+                        margin-bottom: 0.5rem;
+                        color: var(--muted);
+                      ">Color Mode</label>
+                                    <select id="scan-color" style="
+                        width: 100%;
+                        padding: 0.6rem;
+                        border: 1.5px solid var(--border);
+                        border-radius: 8px;
+                        font-size: 13px;
+                      ">
+                                        <option value="color">Full Color</option>
+                                        <option value="grayscale">Grayscale</option>
+                                        <option value="bw">B&W Document</option>
+                                    </select>
+                                </div>
+
+                                <div class="field" style="margin-bottom: 1rem">
+                                    <label style="
+                        font-size: 12px;
+                        margin-bottom: 0.5rem;
+                        color: var(--muted);
+                      ">Language</label>
+                                    <select id="ocr-language" style="
+                        width: 100%;
+                        padding: 0.6rem;
+                        border: 1.5px solid var(--border);
+                        border-radius: 8px;
+                        font-size: 13px;
+                      ">
+                                        <option value="eng" selected>English (Primary)</option>
+                                        <option value="fil">Filipino</option>
+                                        <option value="eng+fil">English + Filipino</option>
+                                    </select>
+                                </div>
+
+                                <div style="
+                      display: flex;
+                      align-items: center;
+                      gap: 0.75rem;
+                      padding: 0.75rem;
+                      background: #f0f7ff;
+                      border-radius: 8px;
+                      border: 1px solid #bae6fd;
+                    ">
+                                    <input type="checkbox" id="ocr-auto-enhance" checked
+                                        style="width: 18px; height: 18px; cursor: pointer" />
+                                    <label for="ocr-auto-enhance" style="
+                        font-size: 12px;
+                        color: #0369a1;
+                        cursor: pointer;
+                        font-weight: 500;
+                      ">Auto-enhance quality</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="
+                  padding: 1.5rem;
+                  background: #f8fafc;
+                  border-top: 1px solid #e2e8f0;
+                ">
+                            <button class="btn-send" onclick="startScanning()" id="start-scan-btn" style="
+                    width: 100%;
+                    padding: 1rem;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 0.75rem;
+                    font-size: 15px;
+                    box-shadow: 0 4px 12px rgba(0, 48, 96, 0.2);
+                  ">
+                                <span style="font-size: 20px"><svg class="icn" width="20" height="20"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                                        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <path
+                                            d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+                                        <circle cx="12" cy="13" r="4" />
+                                    </svg></span> Start Scanning
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Right Content: Preview & OCR Results -->
+                    <div style="
+                flex-grow: 1;
+                display: flex;
+                flex-direction: column;
+                background: #f1f5f9;
+                padding: 2rem;
+                overflow-y: auto;
+              ">
+                        <!-- Preview Section -->
+                        <div style="
+                  flex-grow: 1;
+                  background: #fff;
+                  border-radius: 12px;
+                  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+                  display: flex;
+                  flex-direction: column;
+                  overflow: hidden;
+                  border: 1px solid #e2e8f0;
+                ">
+                            <div style="
+                    padding: 0.75rem 1.25rem;
+                    background: #fff;
+                    border-bottom: 1px solid #f1f5f9;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                  ">
+                                <span style="
+                      font-weight: 600;
+                      font-size: 13px;
+                      color: var(--navy);
+                    ">Live Preview</span>
+                                <div id="scan-status-pill" style="display: none">
+                                    <span class="pill pill-success" style="font-size: 10px">Ready</span>
+                                </div>
+                            </div>
+
+                            <div id="scan-preview" style="
+                    flex-grow: 1;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    position: relative;
+                    background: #f8fafc;
+                    min-height: 300px;
+                  ">
+                                <div style="text-align: center; opacity: 0.4">
+                                    <div style="font-size: 60px; margin-bottom: 1rem"><svg class="icn" width="56"
+                                            height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                            stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"
+                                            aria-hidden="true">
+                                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                                            <polyline points="14 2 14 8 20 8" />
+                                            <line x1="16" y1="13" x2="8" y2="13" />
+                                            <line x1="16" y1="17" x2="8" y2="17" />
+                                            <polyline points="10 9 9 9 8 9" />
+                                        </svg></div>
+                                    <div style="font-weight: 600; color: var(--navy)">
+                                        Waiting for scan...
+                                    </div>
+                                    <div style="
+                        font-size: 12px;
+                        color: var(--muted);
+                        margin-top: 0.5rem;
+                      ">
+                                        Document will appear here after scanning
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- OCR Results (Initially Hidden) -->
+                        <div id="ocr-results-section" style="
+                  display: none;
+                  margin-top: 1.5rem;
+                  animation: slideUp 0.3s ease-out;
+                ">
+                            <div style="
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    gap: 1.5rem;
+                  ">
+                                <!-- Text Results -->
+                                <div class="card" style="
+                      margin: 0;
+                      padding: 1.25rem;
+                      border: 1px solid #e2e8f0;
+                    ">
+                                    <div style="
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        margin-bottom: 1rem;
+                      ">
+                                        <label style="
+                          font-weight: 700;
+                          color: var(--navy);
+                          font-size: 11px;
+                          text-transform: uppercase;
+                        ">Extracted Text</label>
+                                        <div style="display: flex; gap: 0.5rem">
+                                            <button class="btn-sm" onclick="copyOCRText()"
+                                                style="font-size: 10px; padding: 0.25rem 0.5rem">
+                                                <svg class="icn" width="12" height="12" viewBox="0 0 24 24" fill="none"
+                                                    stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                                                    stroke-linejoin="round" aria-hidden="true">
+                                                    <rect x="8" y="2" width="8" height="4" rx="1" ry="1" />
+                                                    <path
+                                                        d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+                                                </svg> Copy
+                                            </button>
+                                            <button class="btn-sm" onclick="editOCRText()"
+                                                style="font-size: 10px; padding: 0.25rem 0.5rem">
+                                                <svg class="icn" width="12" height="12" viewBox="0 0 24 24" fill="none"
+                                                    stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                                                    stroke-linejoin="round" aria-hidden="true">
+                                                    <path d="M12 20h9" />
+                                                    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                                                </svg> Edit
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <textarea id="ocr-extracted-text" style="
+                        width: 100%;
+                        min-height: 180px;
+                        border: 1.5px solid #e2e8f0;
+                        border-radius: 8px;
+                        padding: 0.75rem;
+                        font-family: &quot;JetBrains Mono&quot;, monospace;
+                        font-size: 12px;
+                        line-height: 1.6;
+                        resize: none;
+                        background: #fafbfc;
+                      " placeholder="OCR text will appear here..."></textarea>
+                                </div>
+
+                                <!-- Encoding & Actions -->
+                                <div class="card" style="
+                      margin: 0;
+                      padding: 1.25rem;
+                      border: 1px solid #e2e8f0;
+                      display: flex;
+                      flex-direction: column;
+                    ">
+                                    <label style="
+                        font-weight: 700;
+                        color: var(--navy);
+                        font-size: 11px;
+                        text-transform: uppercase;
+                        margin-bottom: 1rem;
+                      ">Encoding Options</label>
+
+                                    <div style="
+                        display: flex;
+                        flex-direction: column;
+                        gap: 0.75rem;
+                        flex-grow: 1;
+                      ">
+                                        <div onclick="document.getElementById('auto-encode').click()" style="
+                          padding: 1rem;
+                          border: 1.5px solid #e2e8f0;
+                          border-radius: 10px;
+                          cursor: pointer;
+                          transition: all 0.2s;
+                          background: #fff;
+                        " id="auto-encode-wrap" class="encoding-card active">
+                                            <div style="
+                            display: flex;
+                            align-items: flex-start;
+                            gap: 0.75rem;
+                          ">
+                                                <input type="radio" id="auto-encode" name="encoding-option" value="auto"
+                                                    checked onchange="toggleEncodingOption()" style="margin-top: 3px" />
+                                                <div>
+                                                    <div style="
+                                font-weight: 700;
+                                font-size: 13px;
+                                color: var(--navy);
+                              ">
+                                                        Smart Auto-Encode
+                                                    </div>
+                                                    <div style="
+                                font-size: 11px;
+                                color: var(--muted);
+                                margin-top: 2px;
+                              ">
+                                                        AI will automatically categorize and route this
+                                                        document.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div onclick="
+                          document.getElementById('manual-encode').click()
+                        " style="
+                          padding: 1rem;
+                          border: 1.5px solid #e2e8f0;
+                          border-radius: 10px;
+                          cursor: pointer;
+                          transition: all 0.2s;
+                          background: #fff;
+                        " id="manual-encode-wrap" class="encoding-card">
+                                            <div style="
+                            display: flex;
+                            align-items: flex-start;
+                            gap: 0.75rem;
+                          ">
+                                                <input type="radio" id="manual-encode" name="encoding-option"
+                                                    value="manual" onchange="toggleEncodingOption()"
+                                                    style="margin-top: 3px" />
+                                                <div>
+                                                    <div style="
+                                font-weight: 700;
+                                font-size: 13px;
+                                color: var(--navy);
+                              ">
+                                                        Manual Encoding
+                                                    </div>
+                                                    <div style="
+                                font-size: 11px;
+                                color: var(--muted);
+                                margin-top: 2px;
+                              ">
+                                                        Manually fill out document metadata and remarks.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Quick Preview / Mini Form -->
+                                        <div id="encoding-content-area" style="
+                          margin-top: 0.5rem;
+                          padding: 1rem;
+                          background: #f8fafc;
+                          border-radius: 8px;
+                          border: 1px solid #e2e8f0;
+                          font-size: 12px;
+                          flex-grow: 1;
+                        ">
+                                            <div id="auto-encode-preview">
+                                                <div style="
+                              display: grid;
+                              grid-template-columns: 1fr 1fr;
+                              gap: 0.75rem;
+                            ">
+                                                    <div>
+                                                        <div style="
+                                  color: var(--muted);
+                                  font-size: 10px;
+                                  text-transform: uppercase;
+                                ">
+                                                            Ref No
+                                                        </div>
+                                                        <div id="preview-ref"
+                                                            style="font-weight: 600; font-family: monospace">
+                                                            ---
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        <div style="
+                                  color: var(--muted);
+                                  font-size: 10px;
+                                  text-transform: uppercase;
+                                ">
+                                                            Status
+                                                        </div>
+                                                        <div>
+                                                            <span class="pill pill-amber"
+                                                                style="font-size: 9px">Pending</span>
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        <div style="
+                                  color: var(--muted);
+                                  font-size: 10px;
+                                  text-transform: uppercase;
+                                ">
+                                                            Type
+                                                        </div>
+                                                        <div id="preview-type" style="font-weight: 600">
+                                                            ---
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        <div style="
+                                  color: var(--muted);
+                                  font-size: 10px;
+                                  text-transform: uppercase;
+                                ">
+                                                            From
+                                                        </div>
+                                                        <div style="display:flex;flex-direction:column;gap:3px;">
+                                                            <div id="preview-from" style="font-weight: 600">
+                                                                ---
+                                                            </div>
+                                                            <div id="preview-division"
+                                                                style="font-size:11px;color:var(--muted);">
+                                                                ---
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div style="grid-column: span 2">
+                                                        <div style="
+                                  color: var(--muted);
+                                  font-size: 10px;
+                                  text-transform: uppercase;
+                                ">
+                                                            Subject
+                                                        </div>
+                                                        <div id="preview-subject" style="
+                                  font-weight: 600;
+                                  overflow: hidden;
+                                  text-overflow: ellipsis;
+                                  white-space: nowrap;
+                                ">
+                                                            ---
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div id="manual-encode-form" style="display: none">
+                                                <div class="field" style="margin-bottom: 0.5rem">
+                                                    <input type="text" id="manual-subject"
+                                                        placeholder="Document Subject..." style="
+                                width: 100%;
+                                padding: 0.4rem;
+                                font-size: 12px;
+                                border: 1px solid var(--border);
+                                border-radius: 4px;
+                              " />
+                                                </div>
+                                                <div style="display: flex; gap: 0.5rem">
+                                                    <select id="manual-doc-type" style="
+                                flex: 1;
+                                padding: 0.4rem;
+                                font-size: 12px;
+                                border: 1px solid var(--border);
+                                border-radius: 4px;
+                              ">
+                                                        <option value="Memorandum">Memorandum</option>
+                                                        <option value="Letter">Letter</option>
+                                                    </select>
+                                                    <select id="manual-direction" style="
+                                flex: 1;
+                                padding: 0.4rem;
+                                font-size: 12px;
+                                border: 1px solid var(--border);
+                                border-radius: 4px;
+                              ">
+                                                        <option value="incoming">Incoming</option>
+                                                        <option value="outgoing">Outgoing</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" id="ocr-modal-footer" style="
+            padding: 1.25rem 2rem;
+            background: #fff;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+          ">
+                <button class="btn-sec" onclick="closeOCRScanner()" style="padding: 0.75rem 1.5rem; font-weight: 600">
+                    Cancel
+                </button>
+                <button class="btn-sec" onclick="detectScanners()" style="
+              padding: 0.75rem 1.5rem;
+              font-weight: 600;
+              display: flex;
+              align-items: center;
+              gap: 0.5rem;
+            ">
+                    <svg class="icn" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <polyline points="23 4 23 10 17 10" />
+                        <polyline points="1 20 1 14 7 14" />
+                        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+                    </svg> Refresh
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- QUICK SEND EXISTING DOCUMENT MODAL -->
+    <div class="modal-overlay" id="quick-send-modal">
+        <div class="modal" style="max-width: 520px">
+            <div class="modal-head">
+                <h3 id="quick-send-title">Send Existing Document</h3>
+                <span class="modal-close" onclick="closeQuickSend()" aria-label="Close">✕</span>
+            </div>
+            <div class="modal-body">
+                <div class="compose-wrap">
+                    <div class="compose-to">
+                        <label>Send To:</label>
+                        <input id="quick-send-to" list="compose-recipient-list"
+                            placeholder="Recipient name, role, or email..." aria-label="Recipient" />
+                    </div>
+
+                    <!-- Document Direction Field -->
+                    <div class="field">
+                        <label>Document Direction <span style="color:var(--danger)">*</span></label>
+                        <div style="display:flex;gap:1.5rem;margin-top:0.5rem;">
+                            <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;font-weight:500;">
+                                <input type="radio" name="quick-send-direction" value="incoming"
+                                    style="width:18px;height:18px;" />
+                                <span style="font-size:14px;">Incoming</span>
+                            </label>
+                            <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;font-weight:500;">
+                                <input type="radio" name="quick-send-direction" value="outgoing"
+                                    style="width:18px;height:18px;" checked />
+                                <span style="font-size:14px;">Outgoing</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label>Instruction</label>
+                        <textarea id="quick-send-instruction" class="compose-body" style="
+                  border: 1.5px solid var(--border);
+                  border-radius: 8px;
+                  padding: 0.6rem;
+                  width: 100%;" min-height: 100px; font-family: var(--font); font-size: 14px; outline:
+                            none; " placeholder=" Enter your instruction for the recipient..."></textarea>
+                    </div>
+                    <div class="field">
+                        <label>Outlook Email Content</label>
+                        <textarea id="quick-send-outlook" class="compose-body" style="
+                  border: 1.5px solid var(--border);
+                  border-radius: 8px;
+                  padding: 0.6rem;
+                  width: 100%;
+                  min-height: 120px;
+                  font-family: var(--font);
+                  font-size: 14px;
+                  outline: none;
+                " placeholder="Paste Outlook email content here..."></textarea>
+                    </div>
+                    <div class="quick-send-note">
+                        Document details are already saved. Sending here will
+                        automatically update destination and status.
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-sec" onclick="closeQuickSend()" aria-label="Cancel">
+                    Cancel
+                </button>
+                <button class="btn-send" onclick="submitQuickSend()" aria-label="Send Document">
+                    Send Document <svg class="icn" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"
+                        aria-hidden="true" style="margin-left:6px">
+                        <line x1="22" y1="2" x2="11" y2="13" />
+                        <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- DOCUMENT METADATA MODAL -->
+    <div class="modal-overlay" id="metadata-modal">
+        <div class="modal" style="max-width: 760px;">
+            <div class="modal-head">
+                <h3>Document Metadata</h3>
+                <span class="modal-close" onclick="closeMetadataModal()">✕</span>
+            </div>
+            <div class="modal-body" id="metadata-modal-body" style="padding:1.5rem;">
+                <!-- populated by showMetadataModal(ref) -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn-sec" onclick="closeMetadataModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- UPLOAD NEW VERSION MODAL -->
+    <div class="modal-overlay" id="upload-version-modal">
+        <div class="modal" style="max-width: 620px;">
+            <div class="modal-head">
+                <h3>Upload New Version</h3>
+                <span class="modal-close" onclick="closeUploadVersionModal()">✕</span>
+            </div>
+            <div class="modal-body">
+                <div class="compose-wrap">
+                    <div
+                        style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:0.7rem 1rem;margin-bottom:1.25rem;font-size:12.5px;color:#1e40af;line-height:1.5;">
+                        <strong>Document Revision Workflow:</strong> Download the current version → edit externally →
+                        upload your revised file here. The system will create a new version while keeping the same
+                        document reference.
+                    </div>
+                    <div class="field">
+                        <label>Document Reference</label>
+                        <input id="version-doc-ref" readonly style="background:#f8fafc;color:var(--muted);" />
+                    </div>
+                    <div class="field">
+                        <label>Subject</label>
+                        <input id="version-doc-subject" readonly style="background:#f8fafc;color:var(--muted);" />
+                    </div>
+                    <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                        <div class="field">
+                            <label>Current Version</label>
+                            <input id="version-current" readonly style="background:#f8fafc;color:var(--muted);" />
+                        </div>
+                        <div class="field">
+                            <label>New Version</label>
+                            <input id="version-new" readonly
+                                style="background:#f8fafc;font-weight:700;color:var(--navy);" />
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>Version Notes / Revision Summary <span style="color:var(--danger)">*</span></label>
+                        <textarea id="version-notes" placeholder="Briefly describe what changed in this version…"
+                            style="min-height:80px;width:100%;border:1.5px solid var(--border);border-radius:8px;padding:0.6rem;font-family:var(--font);font-size:14px;outline:none;resize:vertical;"></textarea>
+                    </div>
+                    <input type="file" id="version-file-input" style="display:none"
+                        onchange="handleVersionFile(this)" />
+                    <div class="attach-zone" onclick="document.getElementById('version-file-input').click()">
+                        <svg class="icn" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path
+                                d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" />
+                        </svg> <strong>Upload revised file</strong> — select the new version of the document<br />
+                        <span style="font-size:12px">PDF, DOCX, XLSX, JPG, PNG and other supported files</span>
+                    </div>
+                    <div id="version-file-list" class="attachment-list"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-sec" onclick="closeUploadVersionModal()">Cancel</button>
+                <button class="btn-send" onclick="submitNewVersion()">Upload New Version</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- VERSION HISTORY MODAL -->
+    <div class="modal-overlay" id="version-history-modal">
+        <div class="modal" style="max-width: 680px;">
+            <div class="modal-head">
+                <h3>Version History</h3>
+                <span class="modal-close" onclick="closeVersionHistoryModal()">✕</span>
+            </div>
+            <div class="modal-body" id="version-history-body" style="padding:1.25rem;">
+                <!-- populated by showVersionHistory(ref) -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn-sec" onclick="closeVersionHistoryModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- WORKFLOW STATUS UPDATE MODAL -->
+    <div class="modal-overlay" id="status-update-modal">
+        <div class="modal" style="max-width: 540px;">
+            <div class="modal-head">
+                <h3>Update Document Status</h3>
+                <span class="modal-close" onclick="closeStatusUpdateModal()">✕</span>
+            </div>
+            <div class="modal-body" style="padding:1.5rem;">
+                <div id="status-update-doc-info"
+                    style="background:#f8f9fa;border:1px solid #e0e0e0;padding:1rem;border-radius:6px;margin-bottom:1.5rem;font-size:13px">
+                    <!-- Document info populated by JavaScript -->
+                </div>
+
+                <div style="margin-bottom:1.5rem">
+                    <label
+                        style="display:block;font-weight:600;color:var(--navy);margin-bottom:0.75rem;font-size:14px">Select
+                        New Status:</label>
+
+                    <div class="field" style="margin-bottom:0.75rem">
+                        <label
+                            style="display:flex;align-items:center;padding:0.75rem;border:2px solid #e0e0e0;border-radius:6px;cursor:pointer;transition:all 0.2s"
+                            onmouseover="this.style.borderColor='var(--navy)'"
+                            onmouseout="if(!this.querySelector('input').checked) this.style.borderColor='#e0e0e0'">
+                            <input type="radio" name="workflow-status" value="Acknowledged" style="margin-right:0.75rem"
+                                onchange="selectWorkflowStatus(this)">
+                            <div>
+                                <div style="font-weight:600;color:var(--navy);font-size:13px">Acknowledge</div>
+                                <div style="font-size:11px;color:var(--muted);margin-top:2px">Confirm receipt of the
+                                    document</div>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="field" style="margin-bottom:0.75rem">
+                        <label
+                            style="display:flex;align-items:center;padding:0.75rem;border:2px solid #e0e0e0;border-radius:6px;cursor:pointer;transition:all 0.2s"
+                            onmouseover="this.style.borderColor='var(--navy)'"
+                            onmouseout="if(!this.querySelector('input').checked) this.style.borderColor='#e0e0e0'">
+                            <input type="radio" name="workflow-status" value="In Progress" style="margin-right:0.75rem"
+                                onchange="selectWorkflowStatus(this)">
+                            <div>
+                                <div style="font-weight:600;color:var(--navy);font-size:13px">In Progress</div>
+                                <div style="font-size:11px;color:var(--muted);margin-top:2px">Currently working on the
+                                    document</div>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="field" style="margin-bottom:0.75rem">
+                        <label
+                            style="display:flex;align-items:center;padding:0.75rem;border:2px solid #e0e0e0;border-radius:6px;cursor:pointer;transition:all 0.2s"
+                            onmouseover="this.style.borderColor='var(--navy)'"
+                            onmouseout="if(!this.querySelector('input').checked) this.style.borderColor='#e0e0e0'">
+                            <input type="radio" name="workflow-status" value="Needs Clarification"
+                                style="margin-right:0.75rem" onchange="selectWorkflowStatus(this)">
+                            <div>
+                                <div style="font-weight:600;color:var(--navy);font-size:13px">Needs Clarification</div>
+                                <div style="font-size:11px;color:var(--muted);margin-top:2px">Requires additional
+                                    information or instructions</div>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="field" style="margin-bottom:0.75rem">
+                        <label
+                            style="display:flex;align-items:center;padding:0.75rem;border:2px solid #e0e0e0;border-radius:6px;cursor:pointer;transition:all 0.2s"
+                            onmouseover="this.style.borderColor='var(--navy)'"
+                            onmouseout="if(!this.querySelector('input').checked) this.style.borderColor='#e0e0e0'">
+                            <input type="radio" name="workflow-status" value="On Hold" style="margin-right:0.75rem"
+                                onchange="selectWorkflowStatus(this)">
+                            <div>
+                                <div style="font-weight:600;color:var(--navy);font-size:13px">On Hold</div>
+                                <div style="font-size:11px;color:var(--muted);margin-top:2px">Temporarily paused,
+                                    awaiting conditions</div>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="field">
+                        <label
+                            style="display:flex;align-items:center;padding:0.75rem;border:2px solid #e0e0e0;border-radius:6px;cursor:pointer;transition:all 0.2s"
+                            onmouseover="this.style.borderColor='var(--navy)'"
+                            onmouseout="if(!this.querySelector('input').checked) this.style.borderColor='#e0e0e0'">
+                            <input type="radio" name="workflow-status" value="Done" style="margin-right:0.75rem"
+                                onchange="selectWorkflowStatus(this)">
+                            <div>
+                                <div style="font-weight:600;color:var(--navy);font-size:13px">Done</div>
+                                <div style="font-size:11px;color:var(--muted);margin-top:2px">Completed required action
+                                    on the document</div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="field" id="status-comment-field" style="display:none">
+                    <label>Comment / Note (optional)</label>
+                    <textarea id="status-comment" rows="3"
+                        placeholder="Add additional information about this status change..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-sec" onclick="closeStatusUpdateModal()">Cancel</button>
+                <button class="btn-send" onclick="submitStatusUpdate()">Update Status</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Global modal container (for account/settings popups) -->
+    <div id="global-modal-container"></div>
+
+    <script src="./depdev_dms_prototype.js"></script>
+
+    <!-- CREATE ANNOUNCEMENT MODAL -->
+    <div class="modal-overlay" id="create-announcement-modal">
+        <div class="modal" style="max-width: 520px">
+            <div class="modal-head">
+                <h3><svg class="icn" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M3 11l18-5v12L3 14v-3z" />
+                        <path d="M11.6 16.8a3 3 0 1 1-5.8-1.6" />
+                    </svg> Create Official Announcement</h3>
+                <span class="modal-close" onclick="closeCreateAnnouncementModal()">✕</span>
+            </div>
+            <div class="modal-body">
+                <div class="compose-wrap">
+                    <div class="field">
+                        <label>Announcement Title</label>
+                        <input type="text" id="new-ann-title" placeholder="Enter announcement title..." />
+                    </div>
+                    <div class="field">
+                        <label>Announcement Content</label>
+                        <textarea id="new-ann-content" placeholder="Enter detailed announcement content..."
+                            style="min-height: 120px; font-family: var(--font); font-size: 14px; width: 100%; border: 1.5px solid var(--border); border-radius: 8px; padding: 0.6rem; outline: none; resize: vertical;"></textarea>
+                    </div>
+                    <div class="form-row" style="display: flex; gap: 1rem">
+                        <div class="field" style="flex: 1">
+                            <label>Priority Level</label>
+                            <select id="new-ann-priority"
+                                style="width: 100%; padding: 0.6rem; border: 1.5px solid var(--border); border-radius: 8px; outline: none; background: #fff; font-family: var(--font);">
+                                <option value="Normal">Normal</option>
+                                <option value="Important">Important</option>
+                                <option value="Urgent">Urgent</option>
+                            </select>
+                        </div>
+                        <div class="field" style="flex: 1">
+                            <label>Expiration Date (Optional)</label>
+                            <input type="date" id="new-ann-expiry" style="width: 100%; font-family: var(--font);" />
+                        </div>
+                    </div>
+                    <div class="field" style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem">
+                        <input type="checkbox" id="new-ann-pinned"
+                            style="width: 16px; height: 16px; cursor: pointer;" />
+                        <label for="new-ann-pinned"
+                            style="font-size: 13.5px; font-weight: 500; cursor: pointer; text-transform: none; letter-spacing: 0; margin-bottom: 0;">Pin
+                            announcement to top</label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-sec" onclick="closeCreateAnnouncementModal()">Cancel</button>
+                <button class="btn-send" onclick="publishAnnouncement()"
+                    style="background: var(--navy); border-color: var(--navy);">Publish</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ANNOUNCEMENT DETAIL MODAL -->
+    <div class="modal-overlay" id="announcement-detail-modal">
+        <div class="modal" style="max-width: 520px">
+            <div class="modal-head">
+                <h3 id="detail-ann-title">Announcement Details</h3>
+                <span class="modal-close" onclick="closeAnnouncementDetailModal()">✕</span>
+            </div>
+            <div class="modal-body" style="padding: 1.25rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <span id="detail-ann-priority-badge"></span>
+                    <span id="detail-ann-date" style="font-size: 12px; color: var(--muted);"></span>
+                </div>
+                <div id="detail-ann-content"
+                    style="font-size: 14px; line-height: 1.6; color: var(--text); background: #f8fafc; padding: 1rem; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 1rem; white-space: pre-wrap;">
+                </div>
+                <div
+                    style="font-size: 12px; color: var(--muted); display: flex; justify-content: space-between; border-top: 1px dashed var(--border); padding-top: 0.75rem;">
+                    <span id="detail-ann-postedby"></span>
+                    <span id="detail-ann-pinned-status" style="font-weight: 600; color: var(--gold);"></span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-sec" onclick="closeAnnouncementDetailModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="loader">
+        <div class="spinner"></div>
+        <p>Loading...</p>
+    </div>
+
+    <!-- OIC Duty Transition Fade -->
+    <div id="oic-duty-fade">
+        <div class="oic-duty-spinner"></div>
+        <p>Assuming OIC Duty...</p>
+    </div>
+</body>
+
+</html>

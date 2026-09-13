@@ -1,0 +1,313 @@
+==============================================
+NOTIFICATION SYSTEM - TESTING GUIDE
+==============================================
+
+STEP-BY-STEP TESTING INSTRUCTIONS
+
+==============================================
+PREPARATION
+==============================================
+
+1. Clear browser cache (Ctrl + Shift + Delete)
+2. Hard refresh the page (Ctrl + Shift + R)
+3. Open browser console (F12) to see debug messages
+
+==============================================
+TEST 1: SEND DOCUMENT AND CREATE NOTIFICATION
+==============================================
+
+1. Open: e:\WORKING_PROTOTYPE\frontend_prototype\depdev_dms_prototype.html
+
+2. Log in as:
+   Email: harry@depdev7.gov.ph
+   Password: password
+   
+3. Click "Documents" in sidebar
+
+4. Find a document (e.g., "2026-05-001 - Division Performance Target 2026")
+
+5. Click the Options dropdown → Select "Send Document"
+
+6. In the "Send Document" modal:
+   - To: Chief Reyes
+   - Click "Send"
+
+7. Expected Result:
+   ✓ Success message appears
+   ✓ Modal closes
+   ✓ Console shows: "Saved X documents to localStorage"
+
+==============================================
+TEST 2: VERIFY NOTIFICATION BADGE
+==============================================
+
+1. Click "Sign out" in sidebar
+
+2. Log in as Chief Reyes:
+   Email: reyes@depdev7.gov.ph
+   Password: password
+
+3. Look at the top navigation bar
+
+4. Expected Result:
+   ✓ Notification icon shows: 🔔 1
+   ✓ Badge is visible with number "1"
+
+==============================================
+TEST 3: OPEN NOTIFICATION PANEL
+==============================================
+
+1. Click the 🔔 Notifications button
+
+2. Expected Result:
+   ✓ Panel slides open from right
+   ✓ Shows notification: "New Document"
+   ✓ Shows document title: "Division Performance Target 2026"
+   ✓ Shows sender: "Sir Harry"
+   ✓ Shows time: "Just now"
+   ✓ Blue dot appears (unread indicator)
+
+==============================================
+TEST 4: CLICK NOTIFICATION
+==============================================
+
+1. Click anywhere on the notification item
+
+2. Expected Result:
+   ✓ Panel closes
+   ✓ Page navigates to "Incoming Documents"
+   ✓ Document preview modal opens automatically
+   ✓ Shows document: "2026-05-001"
+   ✓ Badge changes to: 🔔 (no number)
+   ✓ Console shows: "Status changed" or similar
+
+==============================================
+TEST 5: VERIFY NOTIFICATION IS READ
+==============================================
+
+1. Click 🔔 Notifications again
+
+2. Expected Result:
+   ✓ Notification still visible in history
+   ✓ Blue dot is GONE (marked as read)
+   ✓ Badge still shows no number
+
+==============================================
+TEST 6: CHANGE DOCUMENT STATUS
+==============================================
+
+1. In Incoming Documents, find the document you received
+
+2. Look at the Status column
+
+3. Expected Result:
+   ✓ Status shows as a DROPDOWN (not static badge)
+   ✓ Can click and select different status
+
+4. Click dropdown → Select "In Progress"
+
+5. Expected Result:
+   ✓ Status changes to "In Progress"
+   ✓ Page refreshes showing new status
+   ✓ Console shows: "Status changed: 2026-05-001 → In Progress"
+   ✓ Console shows: "Saved X documents to localStorage"
+
+==============================================
+TEST 7: VERIFY PERSISTENCE (REFRESH)
+==============================================
+
+1. Press F5 to refresh the browser
+
+2. Expected Result:
+   ✓ Still logged in as Chief Reyes
+   ✓ Notification still in history (read)
+   ✓ Document still in Incoming Documents
+   ✓ Status still shows "In Progress"
+   ✓ Badge shows no number
+
+==============================================
+TEST 8: SEND MULTIPLE DOCUMENTS
+==============================================
+
+1. Sign out
+
+2. Log in as Sir Harry again
+
+3. Go to Documents
+
+4. Send 3 different documents to Chief Reyes:
+   - Document 1 → Chief Reyes
+   - Document 2 → Chief Reyes
+   - Document 3 → Chief Reyes
+
+5. Sign out
+
+6. Log in as Chief Reyes
+
+7. Expected Result:
+   ✓ Badge shows: 🔔 3
+   ✓ Notification panel shows 3 notifications
+   ✓ Newest notification is at the top
+
+==============================================
+TEST 9: MARK ALL AS READ
+==============================================
+
+1. With Chief Reyes logged in and 3 unread notifications
+
+2. Click 🔔 Notifications
+
+3. Click "Mark all read" at the top
+
+4. Expected Result:
+   ✓ All 3 notifications lose their blue dots
+   ✓ Badge disappears: 🔔 (no number)
+   ✓ All notifications still visible in history
+
+==============================================
+TEST 10: USER ISOLATION
+==============================================
+
+1. Log in as Sir Harry
+
+2. Look at notification badge
+
+3. Expected Result:
+   ✓ Badge shows: 🔔 0 (or no badge at all)
+   ✓ Sir Harry does NOT see notifications for docs he SENT
+
+4. Sign out
+
+5. Log in as another user (e.g., ARD Mark)
+
+6. Expected Result:
+   ✓ Badge shows: 🔔 0
+   ✓ ARD Mark does NOT see Chief Reyes' notifications
+
+==============================================
+TEST 11: DUPLICATE PREVENTION
+==============================================
+
+1. Log in as Sir Harry
+
+2. Send a document to Chief Reyes
+
+3. Refresh the page (F5) multiple times
+
+4. Navigate to different pages (Dashboard, Documents, Logbook)
+
+5. Sign out
+
+6. Log in as Chief Reyes
+
+7. Expected Result:
+   ✓ Badge shows: 🔔 1 (not 5 or 10)
+   ✓ Only ONE notification exists for that document
+   ✓ Console shows: "Duplicate notification prevented" if you try to create another
+
+==============================================
+TEST 12: DOCUMENT LOGBOOK TRACKING
+==============================================
+
+1. Log in as Chief Reyes
+
+2. Click notification to open document
+
+3. Go to "Document Logbook" in sidebar
+
+4. Find the document you received
+
+5. Expected Result:
+   ✓ Document appears in logbook
+   ✓ Shows tracking trail:
+     - "Sent to Chief Reyes"
+     - "Status changed from Pending to In Progress"
+   ✓ Shows current status: "In Progress"
+
+==============================================
+TEST 13: CLOSE BROWSER AND REOPEN
+==============================================
+
+1. Close browser completely
+
+2. Reopen browser
+
+3. Navigate to: e:\WORKING_PROTOTYPE\frontend_prototype\depdev_dms_prototype.html
+
+4. Log in as Chief Reyes
+
+5. Expected Result:
+   ✓ All notifications still exist
+   ✓ Read notifications still marked as read
+   ✓ Documents still in Incoming Documents
+   ✓ Statuses still correct
+
+==============================================
+COMMON ISSUES AND SOLUTIONS
+==============================================
+
+ISSUE: Badge not showing
+SOLUTION: 
+- Hard refresh (Ctrl + Shift + R)
+- Check console for errors
+- Verify localStorage is enabled
+
+ISSUE: Notification doesn't navigate
+SOLUTION:
+- Check console for errors
+- Verify document reference is correct
+- Try clicking different parts of the notification
+
+ISSUE: Duplicate notifications
+SOLUTION:
+- Should be prevented automatically
+- Check console for "Duplicate notification prevented"
+- If duplicates still appear, clear localStorage and test again
+
+ISSUE: Status not persisting
+SOLUTION:
+- Verify saveDocuments() is being called
+- Check console for "Saved X documents to localStorage"
+- Try hard refresh
+
+ISSUE: Badge shows wrong number
+SOLUTION:
+- Console log should show correct count
+- Try clicking "Mark all read" then send new document
+- Check if notifications are filtered by current user
+
+==============================================
+CONSOLE DEBUG MESSAGES TO LOOK FOR
+==============================================
+
+✓ "Loaded X documents from localStorage"
+✓ "Loaded X notifications from localStorage" (might not show directly)
+✓ "Status changed: [ref] → [status]"
+✓ "Saved X documents to localStorage"
+✓ "Duplicate notification prevented for [ref]"
+✓ "Checking recipient for doc: [ref]"
+✓ "→ Match: RD/admin recipient"
+✓ "renderStatusDropdown called: [ref]"
+
+==============================================
+SUCCESS CRITERIA
+==============================================
+
+The notification system is working correctly if:
+
+✅ Badge shows correct unread count
+✅ Badge updates when notifications are read
+✅ Badge is user-specific (isolated)
+✅ Clicking notification navigates to document
+✅ Notifications marked as read when clicked
+✅ "Mark all read" works
+✅ No duplicate notifications
+✅ Notifications persist across refresh
+✅ Notifications persist after browser close
+✅ Multiple users have separate notifications
+✅ Document status persists
+✅ Status dropdown works correctly
+
+==============================================
+END OF TESTING GUIDE
+==============================================
